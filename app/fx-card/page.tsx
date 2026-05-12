@@ -16,7 +16,7 @@ export default async function FxCardPage({ searchParams }: Props) {
   const rank = Number(params.rank ?? 1);
 
   const today = dayjs().format("YYYY-MM-DD");
-  const yesterday = dayjs().subtract(1, "day").format("YYYY-MM-DD");
+  const yesterday = dayjs().subtract(2, "day").format("YYYY-MM-DD");
 
   const [todayData, yesterdayData] = await Promise.all([
     fetchRates(today),
