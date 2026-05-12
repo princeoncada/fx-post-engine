@@ -15,7 +15,7 @@ export default function PrivacyPolicyPage() {
       </p>
 
       <p className="mt-4">
-        For questions, contact: prince.oncada@gmail.com
+        For questions, contact: alshizamin@gmail.com
       </p>
     </main>
   );
