@@ -9,7 +9,7 @@ export default function DataDeletionPage() {
 
       <p className="mt-4">
         If you want to request data deletion or have questions about data usage,
-        contact: prince.oncada@gmail.com
+        contact: alshizamin@gmail.com
       </p>
     </main>
   );
