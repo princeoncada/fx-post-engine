@@ -4,6 +4,14 @@ import { NextResponse } from "next/server";
 import { postToFacebook } from "@/lib/facebook/post-to-facebook";
 
 export async function POST(req: Request) {
+
+    if (process.env.VERCEL === "1") {
+        return Response.json(
+            { error: "This route is disabled in production. Run locally only." },
+            { status: 403 }
+        );
+    }
+
     try {
         const body = await req.json();
 
