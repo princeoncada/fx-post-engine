@@ -6,6 +6,14 @@ import { generateCaption } from "@/lib/fx/caption";
 import { screenshotFxCards } from "@/lib/fx/screenshot";
 
 export async function GET(req: Request) {
+
+    if (process.env.VERCEL === "1") {
+        return Response.json(
+            { error: "This route is disabled in production. Run locally only." },
+            { status: 403 }
+        );
+    }
+    
     const today = dayjs().format("YYYY-MM-DD");
     const yesterday = dayjs().subtract(2, "day").format("YYYY-MM-DD");
 
