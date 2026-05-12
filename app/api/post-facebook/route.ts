@@ -24,10 +24,7 @@ export async function POST(req: Request) {
             );
         }
 
-        const result = await postToFacebook({
-            imagePaths,
-            caption,
-        });
+        const result = await postToFacebook({ imagePaths, caption });
 
         return NextResponse.json({
             success: true,
