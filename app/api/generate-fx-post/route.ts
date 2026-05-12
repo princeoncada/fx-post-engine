@@ -6,15 +6,6 @@ import { generateCaption } from "@/lib/fx/caption";
 import { screenshotFxCards } from "@/lib/fx/screenshot";
 
 export async function GET(req: Request) {
-    const auth = req.headers.get("authorization");
-    const secret = process.env.CRON_SECRET;
-    const isDev = process.env.NODE_ENV === "development";
-
-    if (!isDev && secret && auth !== `Bearer ${secret}`) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-
     const today = dayjs().format("YYYY-MM-DD");
     const yesterday = dayjs().subtract(2, "day").format("YYYY-MM-DD");
 
