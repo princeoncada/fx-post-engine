@@ -2,7 +2,6 @@
 
 import fs from "fs";
 import path from "path";
-import FormData from "form-data";
 
 type PostToFacebookInput = {
     imagePaths: string[];
@@ -63,7 +62,8 @@ export async function postToFacebook({
     console.log("[FACEBOOK DEBUG] PAGE CHECK", {
         status: pageCheckRes.status,
         ok: pageCheckRes.ok,
-        pageCheckJson: effectivePageAccessToken,
+        pageCheckJson,
+        effectivePageAccessTokenPreview: maskToken(effectivePageAccessToken),
     });
 
     if (!pageCheckRes.ok) {
@@ -101,26 +101,23 @@ export async function postToFacebook({
             fields: {
                 source: absolutePath,
                 published: "false",
-                temporary: "true",
                 access_token: maskToken(effectivePageAccessToken),
             },
         });
 
+        const fileBuffer = await fs.promises.readFile(absolutePath);
+        const fileBlob = new Blob([fileBuffer], { type: "image/png" });
+
         const form = new FormData();
 
-        form.append("source", fs.createReadStream(absolutePath));
+        form.append("source", fileBlob, path.basename(absolutePath));
         form.append("published", "false");
-        form.append("temporary", "true");
         form.append("access_token", effectivePageAccessToken);
 
-        const uploadRes = await fetch(
-            `https://graph.facebook.com/${graphVersion}/${pageId}/photos`,
-            {
-                method: "POST",
-                body: form as unknown as BodyInit,
-                headers: form.getHeaders() as HeadersInit,
-            }
-        );
+        const uploadRes = await fetch(uploadUrl, {
+            method: "POST",
+            body: form,
+        });
 
         const uploadJson =
             (await uploadRes.json()) as FacebookPhotoUploadResponse;
@@ -159,13 +156,14 @@ export async function postToFacebook({
         attachedMediaDebug,
     });
 
-    const feedForm = new FormData();
+    const feedParams = new URLSearchParams();
 
-    feedForm.append("message", caption);
-    feedForm.append("access_token", pageAccessToken);
+    feedParams.append("message", caption);
+    feedParams.append("access_token", effectivePageAccessToken);
+    feedParams.append("published", "true");
 
     uploadedPhotoIds.forEach((photoId, index) => {
-        feedForm.append(
+        feedParams.append(
             `attached_media[${index}]`,
             JSON.stringify({ media_fbid: photoId })
         );
@@ -173,8 +171,7 @@ export async function postToFacebook({
 
     const postRes = await fetch(feedUrl, {
         method: "POST",
-        body: feedForm as unknown as BodyInit,
-        headers: feedForm.getHeaders() as HeadersInit,
+        body: feedParams,
     });
 
     const postJson = (await postRes.json()) as {
