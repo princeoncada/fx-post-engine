@@ -20,7 +20,7 @@ export default function TermsOfServicePage() {
       </p>
 
       <p className="mt-4">
-        Contact: prince.oncada@gmail.com
+        Contact: alshizamin@gmail.com
       </p>
     </main>
   );
