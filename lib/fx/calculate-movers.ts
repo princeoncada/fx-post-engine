@@ -2,7 +2,8 @@
 
 export type FxMover = {
     code: string;
-    rateToPhp: number;
+    currentRateToPhp: number;
+    previousRateToPhp: number;
     changePercent: number;
     direction: "up" | "down";
 };
@@ -22,7 +23,8 @@ export function calculateMovers(
 
             return {
                 code,
-                rateToPhp: todayPhp,
+                currentRateToPhp: todayPhp,
+                previousRateToPhp: yesterdayPhp,
                 changePercent,
                 direction: changePercent >= 0 ? "up" : "down",
             };
