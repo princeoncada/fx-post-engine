@@ -9,7 +9,8 @@ export type FxMover = {
 
 export function calculateMovers(
     todayRates: Record<string, number>,
-    yesterdayRates: Record<string, number>
+    yesterdayRates: Record<string, number>,
+    limit = 3
 ): FxMover[] {
     return Object.keys(todayRates)
         .map((code): FxMover => {
@@ -27,5 +28,5 @@ export function calculateMovers(
             };
         })
         .sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent))
-        .slice(0, 5);
+        .slice(0, limit);
 }
