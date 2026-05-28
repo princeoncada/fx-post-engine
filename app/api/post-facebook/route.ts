@@ -1,7 +1,10 @@
 // app/api/post-facebook/route.ts
 
 import { NextResponse } from "next/server";
-import { postToFacebook } from "@/lib/facebook/post-to-facebook";
+import {
+    FacebookPostError,
+    postToFacebook,
+} from "@/lib/facebook/post-to-facebook";
 
 export async function POST(req: Request) {
 
@@ -39,6 +42,16 @@ export async function POST(req: Request) {
             ...result,
         });
     } catch (error) {
+        if (error instanceof FacebookPostError) {
+            return NextResponse.json(
+                {
+                    error: error.message,
+                    details: error.details,
+                },
+                { status: 500 }
+            );
+        }
+
         return NextResponse.json(
             {
                 error:
