@@ -48,6 +48,30 @@ function Set-ManifestVersion {
     Set-Content -LiteralPath $packagePath -Value $packageContent -Encoding utf8
     Write-Host "  Updated package.json"
   }
+
+  $lockPath = "package-lock.json"
+  if (Test-Path -LiteralPath $lockPath) {
+    $lockContent = Get-Content -LiteralPath $lockPath -Raw
+    $updatedLockContent = [regex]::Replace(
+      $lockContent,
+      '(^\s*"version":\s*")[^"]+(")',
+      { param($match) $match.Groups[1].Value + $BaseVersion + $match.Groups[2].Value },
+      1,
+      [System.Text.RegularExpressions.RegexOptions]::Multiline
+    )
+    $updatedLockContent = [regex]::Replace(
+      $updatedLockContent,
+      '("packages"\s*:\s*\{\s*""\s*:\s*\{[\s\S]*?^\s*"version":\s*")[^"]+(")',
+      { param($match) $match.Groups[1].Value + $BaseVersion + $match.Groups[2].Value },
+      1,
+      [System.Text.RegularExpressions.RegexOptions]::Multiline
+    )
+
+    if ($updatedLockContent -ne $lockContent) {
+      Set-Content -LiteralPath $lockPath -Value $updatedLockContent -Encoding utf8
+      Write-Host "  Updated package-lock.json project metadata"
+    }
+  }
 }
 
 $current = Get-CurrentDocVersion
