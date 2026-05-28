@@ -1,8 +1,8 @@
 # AI Handoff - FX Post Engine
 
-**Version:** 1.0.2-stable
-**Phase:** Phase 1.0.2 - Workflow Automation Scripts
-**Status:** stable
+**Version:** 1.0.3-alpha
+**Phase:** Phase 1.0.3 - Promotion Workflow Hardening
+**Status:** alpha
 **Last updated:** 2026-05-28
 
 ---
@@ -49,7 +49,7 @@ docs/                Operational memory
 
 ## Current Phase Status
 
-**Phase 1.0.2 - Workflow Automation Scripts** is complete.
+**Phase 1.0.3 - Promotion Workflow Hardening** is in progress.
 
 This patch records and hardens the planning changes made after the Phase 1.0 documentation baseline:
 
@@ -62,6 +62,8 @@ This patch records and hardens the planning changes made after the Phase 1.0 doc
 - If one AI validates its own implementation, the PHASE_LOG must say why that was acceptable.
 - After validation, the assistant must provide all one-by-one commit commands in a single PowerShell code block per stage and must use this repo's local scripts.
 - `.\scripts\validate.ps1` is the baseline validation runner for future implementation phases.
+- Validation does not promote alpha to stable. Alpha must be committed first, then `.\scripts\promote.ps1 -Version "X.Y.Z"` must be run, then the promotion changes must be committed separately.
+- `scripts/promote.ps1` refuses to run while the working tree is dirty so alpha commits cannot be skipped.
 
 ---
 
@@ -97,5 +99,6 @@ See `docs/FUTURE_PLANS.md` for full scope.
 | 1.0.0-stable | 2026-05-24 | stable | Documentation baseline established |
 | 1.0.1-stable | 2026-05-28 | stable | Automation plan and workflow hardening |
 | 1.0.2-stable | 2026-05-28 | stable | HFK 5.1.0-equivalent validate runner and compact strategy |
+| 1.0.3-alpha  | 2026-05-28 | alpha  | Promotion workflow hardening |
 
 Full history in `docs/PHASE_LOG.md`.
