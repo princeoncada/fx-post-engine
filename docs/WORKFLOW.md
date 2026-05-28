@@ -62,6 +62,7 @@ PLAN -> CODEX PROMPT -> BUILD -> VERIFY -> DOCUMENT -> COMMIT
 - Run additional phase-specific checks listed below when applicable.
 - Confirm architecture invariants in `CLAUDE.md` are preserved.
 - Confirm the versioning requirements are satisfied.
+- Validation does not promote alpha to stable.
 
 ### 5. DOCUMENT
 - Update `docs/PHASE_LOG.md`.
@@ -81,9 +82,12 @@ If using the single-file PowerShell commit helper, run it one file at a time and
 
 After validation, the assistant must provide commit commands in this order:
 
-1. One fenced PowerShell code block containing all one-by-one `scripts/commit-phase.ps1` commands for the current pre-promotion changes.
+1. One fenced PowerShell code block containing all one-by-one `scripts/commit-phase.ps1` commands for the alpha changes.
 2. One fenced PowerShell code block containing the stable promotion command, when the current version is alpha and promotion is applicable.
 3. One fenced PowerShell code block containing all one-by-one `scripts/commit-phase.ps1` commands for files changed by promotion.
+4. One fenced PowerShell code block containing the push command.
+
+Alpha commits are mandatory. Do not skip directly to stable even if validation already passed. The promotion script exists to create the stable transformation as a separate Git action.
 
 Do not reference commit scripts from another repository. Use this repo's local scripts:
 
@@ -194,6 +198,19 @@ Bugs found inside an in-progress alpha phase are fixed in place until that phase
 
 Always increment, never reuse. If `1.1.0-alpha` is abandoned, the next attempt becomes `1.1.1-alpha` or moves to a later minor version depending on scope.
 
+### Stable Promotion Ordering
+
+The required order is:
+
+1. Implement and document the alpha version.
+2. Validate the alpha version.
+3. Commit every alpha file one by one with `scripts/commit-phase.ps1`.
+4. Run `scripts/promote.ps1 -Version "X.Y.Z"`.
+5. Commit every promotion-modified file one by one with `scripts/commit-phase.ps1`.
+6. Push after the stable promotion commits are complete.
+
+`scripts/promote.ps1` must refuse to run on a dirty working tree. This protects the rule that alpha work is committed before stable promotion.
+
 ---
 
 ## Mandatory Workflow Artifacts
@@ -207,6 +224,7 @@ Every phase completion requires:
 - [ ] `package.json` version field updated
 - [ ] Git commit created with version string
 - [ ] Final response includes one-by-one commit commands in a single PowerShell code block per stage
+- [ ] Alpha commit commands are provided before any stable promotion command
 
 ---
 
