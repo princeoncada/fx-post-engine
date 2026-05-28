@@ -13,7 +13,42 @@ Full version history and validation records.
 | 1.0.1-stable | stable | 2026-05-28 | Automation plan and HFK 5.1.0-equivalent workflow scripts |
 | 1.0.2-stable | stable | 2026-05-28 | HFK 5.1.0-equivalent validate runner and compact strategy |
 | 1.0.3-stable | stable | 2026-05-28 | Promotion workflow hardening |
-| 1.0.4-stable  | alpha  | 2026-05-28 | Lockfile versioning guard |
+| 1.0.4-stable | stable | 2026-05-28 | Lockfile versioning guard |
+| 1.0.5-alpha  | alpha  | 2026-05-28 | Targeted lockfile version sync |
+
+---
+
+## [1.0.5-alpha] - 2026-05-28
+**Phase:** Phase 1.0.5 - Targeted Lockfile Version Sync
+**Type:** Documentation and workflow script patch
+**Status:** alpha
+
+### Scope
+Replaced the overly strict lockfile rule with a targeted project metadata sync rule. Project versioning may update only the top-level `package-lock.json` `version` key and `packages[""].version`; dependency entry versions under `node_modules/*` remain protected.
+
+### Files Updated
+- `package.json` - moved version to `1.0.5`
+- `package-lock.json` - updated only top-level `version` and `packages[""].version` to `1.0.5`
+- `scripts/promote.ps1` - added targeted package-lock project metadata updater
+- `scripts/validate.ps1` - added package-lock root metadata version sync check
+- `CLAUDE.md` - documented targeted package-lock version policy
+- `docs/WORKFLOW.md` - replaced broad lockfile ban with targeted metadata rule
+- `docs/VERSIONING.md` - documented protected dependency entry versions
+- `docs/AI_HANDOFF.md` - updated current alpha state and lockfile policy
+- `docs/FUTURE_PLANS.md` - tracked this hardening patch as in progress
+- `docs/PHASE_LOG.md` - recorded this alpha patch
+
+### Validation
+- Baseline runner: `powershell -ExecutionPolicy Bypass -File .\scripts\validate.ps1` passed 7/7 checks
+- Lockfile scope review: Pass; `package-lock.json` diff is limited to top-level `version` and `packages[""].version`
+- Package-lock metadata sync: Pass
+- Diff hygiene: Pass
+- Package JSON parse: Pass
+- Mojibake scan: Pass
+- TypeScript: Pass
+- Tests: Pass
+- Build: Pass
+- Promotion: pending; do not run until alpha files are committed
 
 ---
 
@@ -23,7 +58,7 @@ Full version history and validation records.
 **Status:** stable
 
 ### Scope
-Hardened the workflow after discovering that package version promotion touched `package-lock.json`. Lockfile edits are now explicitly forbidden for docs-only, version-only, prompt-only, workflow-only, and promotion-only changes.
+Hardened the workflow after discovering that package version promotion touched too much of `package-lock.json`. This was superseded by `1.0.5-alpha`, which allows targeted root project metadata updates while protecting dependency entries.
 
 ### Files Updated
 - `package.json` - moved version to `1.0.4`
