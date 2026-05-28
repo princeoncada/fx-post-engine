@@ -115,10 +115,15 @@ Every repository change must be documented through versioning, regardless of siz
 1. Run validation commands from `docs/WORKFLOW.md`.
    - Baseline command: `.\scripts\validate.ps1`
    - Append phase-specific checks only when needed.
-2. Confirm all four versioning locations are in sync.
-3. Update `docs/PHASE_LOG.md` with results and validation output.
-4. Update `docs/AI_HANDOFF.md` to reflect the new state.
-5. Commit with the version string in the message.
+2. Keep validated implementation work in alpha until the alpha files are committed.
+3. Confirm all four versioning locations are in sync for the alpha state.
+4. Update `docs/PHASE_LOG.md` with results and validation output.
+5. Update `docs/AI_HANDOFF.md` to reflect the alpha state.
+6. Provide one-by-one alpha commit commands.
+7. Provide the `scripts/promote.ps1` command when promotion is applicable.
+8. Provide one-by-one post-promotion commit commands.
+
+Validation does not create stable state. Stable state is created only by running the promotion script after alpha commits exist.
 
 ---
 
