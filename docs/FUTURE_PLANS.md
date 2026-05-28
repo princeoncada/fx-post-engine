@@ -1,7 +1,7 @@
 ﻿# Future Plans - FX Post Engine
 
 **Last updated:** 2026-05-28
-**Current stable version:** 1.0.3-stable
+**Current stable version:** 1.0.4-stable
 
 ---
 
@@ -20,7 +20,7 @@
 
 | Version      | Phase | Description |
 |--------------|-------|-------------|
-| 1.0.4-alpha | Lockfile Versioning Guard | Prevent version-only workflows from touching package-lock.json |
+| 1.0.4-stable | Lockfile Versioning Guard | Prevent version-only workflows from touching package-lock.json |
 
 ---
 
@@ -159,5 +159,7 @@
 | Database: PostgreSQL or SQLite | No multi-user or complex query needs yet. Filesystem JSONL is sufficient and keeps operations simple. |
 | AI-generated caption content | Caption has legal and brand implications. Operator must remain in control of message content. Templates only. |
 | Separate operator review mode for automation | Low value after scheduled posting exists. Manual review is already covered by running the existing dashboard with `npm run dev`; adding another review mode would create another path to maintain without changing the real workflow. |
+
+
 
 
