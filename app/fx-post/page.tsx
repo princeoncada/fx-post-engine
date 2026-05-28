@@ -1,24 +1,16 @@
 // src/app/fx-post/page.tsx
 
-import dayjs from "dayjs";
 import { FxPostTemplate } from "@/components/FxPostTemplate";
-import { fetchRates } from "@/lib/fx/fetch-rates";
-import { calculateMovers } from "@/lib/fx/calculate-movers";
+import { loadFxMovers } from "@/lib/fx/load-fx-movers";
+import { formatPhtDate } from "@/lib/fx/pht-date";
 
 export default async function FxPostPage() {
-  const today = dayjs().format("YYYY-MM-DD");
-  const yesterday = dayjs().subtract(1, "day").format("YYYY-MM-DD");
-
-  const [todayData, yesterdayData] = await Promise.all([
-    fetchRates(today),
-    fetchRates(yesterday),
-  ]);
-
-  const movers = calculateMovers(todayData.rates, yesterdayData.rates);
+  const { retrievedDate, latestData, movers } = await loadFxMovers();
 
   return (
     <FxPostTemplate
-      dateLabel={dayjs(today).format("MMMM D, YYYY")}
+      marketDateLabel={formatPhtDate(latestData.date, "long")}
+      retrievedDateLabel={formatPhtDate(retrievedDate, "long")}
       movers={movers}
     />
   );
