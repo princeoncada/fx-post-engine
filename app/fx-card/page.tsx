@@ -1,9 +1,8 @@
 // src/app/fx-card/page.tsx
 
-import dayjs from "dayjs";
 import { FxMoverCard } from "@/components/FxMoverCard";
-import { fetchRates } from "@/lib/fx/fetch-rates";
-import { calculateMovers } from "@/lib/fx/calculate-movers";
+import { loadFxMovers } from "@/lib/fx/load-fx-movers";
+import { formatPhtDate } from "@/lib/fx/pht-date";
 
 type Props = {
   searchParams: Promise<{
@@ -15,15 +14,7 @@ export default async function FxCardPage({ searchParams }: Props) {
   const params = await searchParams;
   const rank = Number(params.rank ?? 1);
 
-  const today = dayjs().format("YYYY-MM-DD");
-  const yesterday = dayjs().subtract(2, "day").format("YYYY-MM-DD");
-
-  const [todayData, yesterdayData] = await Promise.all([
-    fetchRates(today),
-    fetchRates(yesterday),
-  ]);
-
-  const movers = calculateMovers(todayData.rates, yesterdayData.rates, 3);
+  const { retrievedDate, latestData, movers } = await loadFxMovers(3);
   const mover = movers[rank - 1];
 
   if (!mover) {
@@ -34,7 +25,8 @@ export default async function FxCardPage({ searchParams }: Props) {
     <FxMoverCard
       mover={mover}
       rank={rank}
-      dateLabel={dayjs(today).format("MM/DD/YYYY")}
+      marketDateLabel={formatPhtDate(latestData.date, "short")}
+      retrievedDateLabel={formatPhtDate(retrievedDate, "short")}
     />
   );
 }
