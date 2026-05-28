@@ -52,19 +52,24 @@ function Set-ManifestVersion {
   $lockPath = "package-lock.json"
   if (Test-Path -LiteralPath $lockPath) {
     $lockContent = Get-Content -LiteralPath $lockPath -Raw
-    $updatedLockContent = [regex]::Replace(
-      $lockContent,
+    $topVersionRegex = [System.Text.RegularExpressions.Regex]::new(
       '(^\s*"version":\s*")[^"]+(")',
-      { param($match) $match.Groups[1].Value + $BaseVersion + $match.Groups[2].Value },
-      1,
       [System.Text.RegularExpressions.RegexOptions]::Multiline
     )
-    $updatedLockContent = [regex]::Replace(
-      $updatedLockContent,
-      '("packages"\s*:\s*\{\s*""\s*:\s*\{[\s\S]*?^\s*"version":\s*")[^"]+(")',
+    $updatedLockContent = $topVersionRegex.Replace(
+      $lockContent,
       { param($match) $match.Groups[1].Value + $BaseVersion + $match.Groups[2].Value },
-      1,
+      1
+    )
+
+    $rootPackageVersionRegex = [System.Text.RegularExpressions.Regex]::new(
+      '("packages"\s*:\s*\{\s*""\s*:\s*\{[\s\S]*?^\s*"version":\s*")[^"]+(")',
       [System.Text.RegularExpressions.RegexOptions]::Multiline
+    )
+    $updatedLockContent = $rootPackageVersionRegex.Replace(
+      $updatedLockContent,
+      { param($match) $match.Groups[1].Value + $BaseVersion + $match.Groups[2].Value },
+      1
     )
 
     if ($updatedLockContent -ne $lockContent) {
