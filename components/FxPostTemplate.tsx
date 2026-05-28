@@ -3,11 +3,16 @@
 import type { FxMover } from "@/lib/fx/calculate-movers";
 
 type Props = {
-  dateLabel: string;
+  marketDateLabel: string;
+  retrievedDateLabel: string;
   movers: FxMover[];
 };
 
-export function FxPostTemplate({ dateLabel, movers }: Props) {
+export function FxPostTemplate({
+  marketDateLabel,
+  retrievedDateLabel,
+  movers,
+}: Props) {
   return (
     <main className="relative h-[1350px] w-[1080px] overflow-hidden bg-[#F4E8D3] text-[#123C2F]">
       <div className="absolute inset-0 p-20">
@@ -20,7 +25,12 @@ export function FxPostTemplate({ dateLabel, movers }: Props) {
           <h1 className="text-[76px] font-bold leading-[0.98]">
             Top 5 Currency Movers vs PHP
           </h1>
-          <p className="mt-8 text-3xl text-[#6F624D]">{dateLabel}</p>
+          <p className="mt-8 text-3xl text-[#6F624D]">
+            Latest market data: {marketDateLabel}
+          </p>
+          <p className="mt-3 text-2xl font-semibold text-[#9B7A34]">
+            Retrieved: {retrievedDateLabel} PHT
+          </p>
         </section>
 
         <section className="mt-16 space-y-6">
