@@ -1,8 +1,8 @@
 ﻿# AI Handoff - FX Post Engine
 
-**Version:** 1.0.4-stable
-**Phase:** Phase 1.0.4 - Lockfile Versioning Guard
-**Status:** stable
+**Version:** 1.0.5-alpha
+**Phase:** Phase 1.0.5 - Targeted Lockfile Version Sync
+**Status:** alpha
 **Last updated:** 2026-05-28
 
 ---
@@ -49,7 +49,7 @@ docs/                Operational memory
 
 ## Current Phase Status
 
-**Phase 1.0.4 - Lockfile Versioning Guard** is in progress.
+**Phase 1.0.5 - Targeted Lockfile Version Sync** is in progress.
 
 This patch records and hardens the planning changes made after the Phase 1.0 documentation baseline:
 
@@ -64,8 +64,8 @@ This patch records and hardens the planning changes made after the Phase 1.0 doc
 - `.\scripts\validate.ps1` is the baseline validation runner for future implementation phases.
 - Validation does not promote alpha to stable. Alpha must be committed first, then `.\scripts\promote.ps1 -Version "X.Y.Z"` must be run, then the promotion changes must be committed separately.
 - `scripts/promote.ps1` refuses to run while the working tree is dirty so alpha commits cannot be skipped.
-- `package-lock.json` is not a versioning location and must not be edited for docs-only, version-only, prompt-only, workflow-only, or promotion-only changes.
-- Lockfile changes are allowed only when dependency declarations or dependency resolution actually change.
+- `package-lock.json` project metadata may be synced for version changes, but only at top-level `version` and `packages[""].version`.
+- Dependency entry versions under `node_modules/*` must never be changed by project versioning or promotion scripts.
 
 ---
 
@@ -102,7 +102,8 @@ See `docs/FUTURE_PLANS.md` for full scope.
 | 1.0.1-stable | 2026-05-28 | stable | Automation plan and workflow hardening |
 | 1.0.2-stable | 2026-05-28 | stable | HFK 5.1.0-equivalent validate runner and compact strategy |
 | 1.0.3-stable | 2026-05-28 | stable | Promotion workflow hardening |
-| 1.0.4-stable  | 2026-05-28 | alpha  | Lockfile versioning guard |
+| 1.0.4-stable | 2026-05-28 | stable | Lockfile versioning guard |
+| 1.0.5-alpha  | 2026-05-28 | alpha  | Targeted lockfile version sync |
 
 Full history in `docs/PHASE_LOG.md`.
 
