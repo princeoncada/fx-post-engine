@@ -20,7 +20,7 @@
 
 | Version      | Phase | Description |
 |--------------|-------|-------------|
-| 1.0.4-stable | Lockfile Versioning Guard | Prevent version-only workflows from touching package-lock.json |
+| 1.0.5-alpha | Targeted Lockfile Version Sync | Allow only package-lock root project metadata version updates |
 
 ---
 
