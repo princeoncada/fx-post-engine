@@ -1,8 +1,8 @@
 ﻿# AI Handoff - FX Post Engine
 
-**Version:** 1.0.5-alpha
+**Version:** 1.0.5-stable
 **Phase:** Phase 1.0.5 - Targeted Lockfile Version Sync
-**Status:** alpha
+**Status:** stable
 **Last updated:** 2026-05-28
 
 ---
@@ -49,7 +49,7 @@ docs/                Operational memory
 
 ## Current Phase Status
 
-**Phase 1.0.5 - Targeted Lockfile Version Sync** is in progress.
+**Phase 1.0.5 - Targeted Lockfile Version Sync** is complete.
 
 This patch records and hardens the planning changes made after the Phase 1.0 documentation baseline:
 
@@ -103,10 +103,6 @@ See `docs/FUTURE_PLANS.md` for full scope.
 | 1.0.2-stable | 2026-05-28 | stable | HFK 5.1.0-equivalent validate runner and compact strategy |
 | 1.0.3-stable | 2026-05-28 | stable | Promotion workflow hardening |
 | 1.0.4-stable | 2026-05-28 | stable | Lockfile versioning guard |
-| 1.0.5-alpha  | 2026-05-28 | alpha  | Targeted lockfile version sync |
+| 1.0.5-stable | 2026-05-28 | stable | Targeted lockfile version sync |
 
 Full history in `docs/PHASE_LOG.md`.
-
-
-
-
