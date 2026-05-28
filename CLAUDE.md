@@ -77,10 +77,11 @@ At the start of every new session, in order:
 2. Read `docs/PHASE_LOG.md` and note the last completed entry.
 3. Read `docs/VERSIONING.md` and confirm the current version string.
 4. Read `docs/FUTURE_PLANS.md` and note what is planned next.
-5. Check `package.json` version field matches the docs version without the state suffix.
-6. Summarize current version, phase status, and next planned phase.
-7. Ask the user what they want to work on today.
-8. Wait for the Implementation Gate phrase before producing Codex work.
+5. Read `docs/COMPACT_STRATEGY.md` only when context is long, a phase just stabilized, or a new session handoff is needed.
+6. Check `package.json` version field matches the docs version without the state suffix.
+7. Summarize current version, phase status, and next planned phase.
+8. Ask the user what they want to work on today.
+9. Wait for the Implementation Gate phrase before producing Codex work.
 
 ---
 
@@ -112,6 +113,8 @@ Every repository change must be documented through versioning, regardless of siz
 ### After Codex Finishes
 
 1. Run validation commands from `docs/WORKFLOW.md`.
+   - Baseline command: `.\scripts\validate.ps1`
+   - Append phase-specific checks only when needed.
 2. Confirm all four versioning locations are in sync.
 3. Update `docs/PHASE_LOG.md` with results and validation output.
 4. Update `docs/AI_HANDOFF.md` to reflect the new state.
@@ -184,8 +187,13 @@ app/
   api/post-facebook/         POST: upload + publish to Facebook
 
 docs/                        Operational memory
+  COMPACT_STRATEGY.md        Context window and session handoff strategy
 public/generated/            Derived card PNGs, not committed
 public/assets/               Fixed brand assets
+scripts/
+  commit-phase.ps1           One-file commit helper
+  promote.ps1                Alpha-to-stable promotion helper
+  validate.ps1               Standard validation runner
 ```
 
 ---
