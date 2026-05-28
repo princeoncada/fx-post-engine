@@ -1,7 +1,7 @@
 ﻿# Future Plans - FX Post Engine
 
 **Last updated:** 2026-05-28
-**Current stable version:** 1.0.4-stable
+**Current stable version:** 1.0.5-stable
 
 ---
 
@@ -13,14 +13,15 @@
 | 1.0.0        | Documentation Baseline | Full AI workflow docs system established           |
 | 1.0.1        | Workflow Automation Scripts | HFK 5.1.0-equivalent local commit, validation, promotion, and compact-strategy workflow |
 | 1.0.2        | Workflow Automation Completion | Local validate runner and compact strategy wired into docs |
+| 1.0.3        | Promotion Workflow Hardening | Alpha-first promotion lifecycle and dirty-tree guard |
+| 1.0.4        | Lockfile Versioning Guard | Protected package-lock from broad version rewrites |
+| 1.0.5        | Targeted Lockfile Version Sync | Allow only package-lock root project metadata version updates |
 
 ---
 
 ## In Progress
 
-| Version      | Phase | Description |
-|--------------|-------|-------------|
-| 1.0.5-alpha | Targeted Lockfile Version Sync | Allow only package-lock root project metadata version updates |
+None.
 
 ---
 
@@ -159,7 +160,3 @@
 | Database: PostgreSQL or SQLite | No multi-user or complex query needs yet. Filesystem JSONL is sufficient and keeps operations simple. |
 | AI-generated caption content | Caption has legal and brand implications. Operator must remain in control of message content. Templates only. |
 | Separate operator review mode for automation | Low value after scheduled posting exists. Manual review is already covered by running the existing dashboard with `npm run dev`; adding another review mode would create another path to maintain without changing the real workflow. |
-
-
-
-
