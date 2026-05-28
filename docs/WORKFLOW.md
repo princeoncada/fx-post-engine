@@ -58,7 +58,8 @@ PLAN -> CODEX PROMPT -> BUILD -> VERIFY -> DOCUMENT -> COMMIT
 - If Codex is unavailable, fallback implementation requires explicit fallback approval.
 
 ### 4. VERIFY
-- Run all relevant validation commands listed below.
+- Run `.\scripts\validate.ps1` as the baseline validation runner.
+- Run additional phase-specific checks listed below when applicable.
 - Confirm architecture invariants in `CLAUDE.md` are preserved.
 - Confirm the versioning requirements are satisfied.
 
@@ -109,6 +110,14 @@ No change may be committed as an undocumented adjustment.
 ## Validation Commands
 
 Run these after every implementation unless the PHASE_LOG explicitly documents why a command is not applicable.
+
+### Baseline Runner
+
+```powershell
+.\scripts\validate.ps1
+```
+
+This is the standard validation entry point. It runs diff hygiene, JSON parsing, mojibake scan, TypeScript, unit tests, and build checks. Phase-specific checks append below this command.
 
 ### TypeScript Check
 
@@ -245,3 +254,5 @@ At the end of every session, confirm:
 - [ ] `docs/AI_HANDOFF.md` reflects current state
 - [ ] `docs/PHASE_LOG.md` has a new entry or explicitly notes no changes this session
 - [ ] No sensitive env vars are staged or committed
+
+Use `docs/COMPACT_STRATEGY.md` when a session is long, a phase has just stabilized, or a new session should start from repo state instead of chat history.
