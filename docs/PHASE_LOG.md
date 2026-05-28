@@ -14,14 +14,14 @@ Full version history and validation records.
 | 1.0.2-stable | stable | 2026-05-28 | HFK 5.1.0-equivalent validate runner and compact strategy |
 | 1.0.3-stable | stable | 2026-05-28 | Promotion workflow hardening |
 | 1.0.4-stable | stable | 2026-05-28 | Lockfile versioning guard |
-| 1.0.5-alpha  | alpha  | 2026-05-28 | Targeted lockfile version sync |
+| 1.0.5-stable | stable | 2026-05-28 | Targeted lockfile version sync |
 
 ---
 
-## [1.0.5-alpha] - 2026-05-28
+## [1.0.5-stable] - 2026-05-28
 **Phase:** Phase 1.0.5 - Targeted Lockfile Version Sync
 **Type:** Documentation and workflow script patch
-**Status:** alpha
+**Status:** stable
 
 ### Scope
 Replaced the overly strict lockfile rule with a targeted project metadata sync rule. Project versioning may update only the top-level `package-lock.json` `version` key and `packages[""].version`; dependency entry versions under `node_modules/*` remain protected.
@@ -48,7 +48,7 @@ Replaced the overly strict lockfile rule with a targeted project metadata sync r
 - TypeScript: Pass
 - Tests: Pass
 - Build: Pass
-- Promotion: pending; do not run until alpha files are committed
+- Promotion: completed after alpha files were committed; initial promotion hit a PowerShell Regex overload bug, then the script was patched and the stable docs state was completed in the promotion recovery commit
 
 ---
 
@@ -58,7 +58,7 @@ Replaced the overly strict lockfile rule with a targeted project metadata sync r
 **Status:** stable
 
 ### Scope
-Hardened the workflow after discovering that package version promotion touched too much of `package-lock.json`. This was superseded by `1.0.5-alpha`, which allows targeted root project metadata updates while protecting dependency entries.
+Hardened the workflow after discovering that package version promotion touched too much of `package-lock.json`. This was superseded by `1.0.5-stable`, which allows targeted root project metadata updates while protecting dependency entries.
 
 ### Files Updated
 - `package.json` - moved version to `1.0.4`
@@ -272,7 +272,3 @@ Initial working build of the complete FX Post Engine before the documentation sy
 
 ### Notes
 Retroactively assigned `0.1.0-alpha` status.
-
-
-
-
