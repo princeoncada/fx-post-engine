@@ -1,4 +1,4 @@
-# Versioning - FX Post Engine
+﻿# Versioning - FX Post Engine
 
 ## Version Format
 
@@ -59,8 +59,8 @@ All four must match before a version is declared stable:
 
 | Field        | Value |
 |-------------|-------|
-| Version      | 1.0.3-alpha |
-| State        | alpha |
+| Version      | 1.0.3-stable |
+| State        | stable |
 | Date         | 2026-05-28 |
 | Phase        | Phase 1.0.3 - Promotion Workflow Hardening |
 | Next planned | Phase 1.1.0 - Standalone Automated Posting Runner |
@@ -75,7 +75,7 @@ All four must match before a version is declared stable:
 | 1.0.0-stable | stable | 2026-05-24 | Documentation baseline established |
 | 1.0.1-stable | stable | 2026-05-28 | Automation plan and HFK 5.1.0-equivalent workflow scripts |
 | 1.0.2-stable | stable | 2026-05-28 | HFK 5.1.0-equivalent validate runner and compact strategy |
-| 1.0.3-alpha  | alpha  | 2026-05-28 | Promotion workflow hardening |
+| 1.0.3-stable  | alpha  | 2026-05-28 | Promotion workflow hardening |
 
 ---
 
@@ -83,3 +83,5 @@ All four must match before a version is declared stable:
 
 **1.1.0-alpha** - Phase 1.1.0: Standalone Automated Posting Runner
 Goal: Extract generate/post workflow into a scheduled runner with duplicate prevention, logs, dry-run support, and local server startup.
+
+
