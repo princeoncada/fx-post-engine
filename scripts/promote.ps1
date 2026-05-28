@@ -33,7 +33,7 @@ function Get-CurrentDocVersion {
   throw "Could not find current version in docs/AI_HANDOFF.md"
 }
 
-function Set-PackageVersion {
+function Set-ManifestVersion {
   param([string]$BaseVersion)
 
   $packagePath = "package.json"
@@ -47,28 +47,6 @@ function Set-PackageVersion {
   if ($packageContent -ne (Get-Content -LiteralPath $packagePath -Raw)) {
     Set-Content -LiteralPath $packagePath -Value $packageContent -Encoding utf8
     Write-Host "  Updated package.json"
-  }
-
-  $lockPath = "package-lock.json"
-  if (Test-Path -LiteralPath $lockPath) {
-    $lockContent = Get-Content -LiteralPath $lockPath -Raw
-    $originalLockContent = $lockContent
-    $lockContent = [regex]::Replace(
-      $lockContent,
-      '("version":\s*")[^"]+(")',
-      { param($match) $match.Groups[1].Value + $BaseVersion + $match.Groups[2].Value },
-      1
-    )
-    $lockContent = [regex]::Replace(
-      $lockContent,
-      '("":\s*\{[\s\S]*?"version":\s*")[^"]+(")',
-      { param($match) $match.Groups[1].Value + $BaseVersion + $match.Groups[2].Value },
-      1
-    )
-    if ($lockContent -ne $originalLockContent) {
-      Set-Content -LiteralPath $lockPath -Value $lockContent -Encoding utf8
-      Write-Host "  Updated package-lock.json"
-    }
   }
 }
 
@@ -160,7 +138,7 @@ if (Test-Path -LiteralPath $futurePlansPath) {
   }
 }
 
-Set-PackageVersion -BaseVersion $Version
+Set-ManifestVersion -BaseVersion $Version
 
 Write-Host ""
 Write-Host "Done. Run git status to see changed files."
