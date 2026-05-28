@@ -42,6 +42,44 @@ try {
   Fail-Check $jsonLabel $_.Exception.Message
 }
 
+$lockVersionLabel = "package-lock project metadata version sync"
+try {
+  $lockVersionScript = @'
+const fs = require("fs");
+const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+const lock = JSON.parse(fs.readFileSync("package-lock.json", "utf8"));
+const root = lock.packages && lock.packages[""];
+
+if (lock.version !== pkg.version) {
+  throw new Error(`package-lock top-level version ${lock.version} does not match package.json ${pkg.version}`);
+}
+
+if (!root) {
+  throw new Error('package-lock missing packages[""] root entry');
+}
+
+if (root.version !== pkg.version) {
+  throw new Error(`package-lock packages[""] version ${root.version} does not match package.json ${pkg.version}`);
+}
+'@
+  $tempScript = Join-Path $env:TEMP "fx-post-engine-lock-version-check.js"
+  Set-Content -LiteralPath $tempScript -Value $lockVersionScript -Encoding utf8
+  try {
+    $lockVersionOutput = node $tempScript 2>&1
+    if ($LASTEXITCODE -eq 0) {
+      Pass-Check $lockVersionLabel
+    } else {
+      Fail-Check $lockVersionLabel (($lockVersionOutput | Out-String).Trim())
+    }
+  } finally {
+    if (Test-Path -LiteralPath $tempScript) {
+      Remove-Item -LiteralPath $tempScript -Force
+    }
+  }
+} catch {
+  Fail-Check $lockVersionLabel $_.Exception.Message
+}
+
 $mojibakeLabel = "mojibake scan - docs, root docs, scripts"
 $badSequences = @(
   ([string]([char]0x00E2) + [string]([char]0x20AC)),
