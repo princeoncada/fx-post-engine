@@ -13,14 +13,14 @@ Full version history and validation records.
 | 1.0.1-stable | stable | 2026-05-28 | Automation plan and HFK 5.1.0-equivalent workflow scripts |
 | 1.0.2-stable | stable | 2026-05-28 | HFK 5.1.0-equivalent validate runner and compact strategy |
 | 1.0.3-stable | stable | 2026-05-28 | Promotion workflow hardening |
-| 1.0.4-alpha  | alpha  | 2026-05-28 | Lockfile versioning guard |
+| 1.0.4-stable  | alpha  | 2026-05-28 | Lockfile versioning guard |
 
 ---
 
-## [1.0.4-alpha] - 2026-05-28
+## [1.0.4-stable] - 2026-05-28
 **Phase:** Phase 1.0.4 - Lockfile Versioning Guard
 **Type:** Documentation and workflow script patch
-**Status:** alpha
+**Status:** stable
 
 ### Scope
 Hardened the workflow after discovering that package version promotion touched `package-lock.json`. Lockfile edits are now explicitly forbidden for docs-only, version-only, prompt-only, workflow-only, and promotion-only changes.
@@ -237,5 +237,7 @@ Initial working build of the complete FX Post Engine before the documentation sy
 
 ### Notes
 Retroactively assigned `0.1.0-alpha` status.
+
+
 
 
