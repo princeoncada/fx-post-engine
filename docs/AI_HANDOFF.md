@@ -1,7 +1,7 @@
 # AI Handoff - FX Post Engine
 
-**Version:** 1.0.1-stable
-**Phase:** Phase 1.0.1 - Documentation Hardening
+**Version:** 1.0.2-stable
+**Phase:** Phase 1.0.2 - Workflow Automation Scripts
 **Status:** stable
 **Last updated:** 2026-05-28
 
@@ -49,10 +49,11 @@ docs/                Operational memory
 
 ## Current Phase Status
 
-**Phase 1.0.1 - Documentation Hardening** is complete.
+**Phase 1.0.2 - Workflow Automation Scripts** is complete.
 
 This patch records and hardens the planning changes made after the Phase 1.0 documentation baseline:
 
+- Implements the FX Post Engine equivalent of HFK Publishing Engine Phase 5.1.0: local one-file commit helper, local validation runner, promotion helper, and compact context strategy.
 - Future automation plans now include a standalone runner, local Next.js server startup/reuse, Windows Task Scheduler setup, dry-run mode, human-readable logs, and a structured duplicate-prevention ledger.
 - Every repository change must be documented through versioning, regardless of size.
 - Claude Code remains the default planner, prompt provider, reviewer, and validator.
@@ -60,6 +61,7 @@ This patch records and hardens the planning changes made after the Phase 1.0 doc
 - Either tool may act as fallback implementer or validator only with explicit user approval or a clear single-tool constraint caused by the other tool being unavailable/rate-limited.
 - If one AI validates its own implementation, the PHASE_LOG must say why that was acceptable.
 - After validation, the assistant must provide all one-by-one commit commands in a single PowerShell code block per stage and must use this repo's local scripts.
+- `.\scripts\validate.ps1` is the baseline validation runner for future implementation phases.
 
 ---
 
@@ -76,6 +78,8 @@ Key changes:
 - `scripts/run-daily-fx-post.ps1` - Windows Task Scheduler entry point
 - `scripts/commit-phase.ps1` - local one-file commit helper
 - `scripts/promote.ps1` - local alpha-to-stable promotion helper
+- `scripts/validate.ps1` - local standard validation runner
+- `docs/COMPACT_STRATEGY.md` - context/session handoff strategy
 - `data/run-ledger.jsonl` - structured duplicate-prevention ledger, ignored by git
 - `logs/` - human-readable run logs, ignored by git
 - `package.json` - add `post:fx`
@@ -92,5 +96,6 @@ See `docs/FUTURE_PLANS.md` for full scope.
 | 0.1.0        | 2026-05-01 | alpha  | Initial working build before docs |
 | 1.0.0-stable | 2026-05-24 | stable | Documentation baseline established |
 | 1.0.1-stable | 2026-05-28 | stable | Automation plan and workflow hardening |
+| 1.0.2-stable | 2026-05-28 | stable | HFK 5.1.0-equivalent validate runner and compact strategy |
 
 Full history in `docs/PHASE_LOG.md`.
