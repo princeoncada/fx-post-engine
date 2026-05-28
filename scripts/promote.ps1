@@ -8,6 +8,18 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+$dirtyFiles = git status --porcelain
+if ($LASTEXITCODE -ne 0) {
+  Write-Error "Could not inspect git status. Promotion aborted."
+  exit 1
+}
+
+if ($dirtyFiles) {
+  Write-Error "Working tree is not clean. Commit the alpha version first, then run promotion."
+  $dirtyFiles | ForEach-Object { Write-Host "  $_" }
+  exit 1
+}
+
 function Get-CurrentDocVersion {
   $handoff = Get-Content -LiteralPath "docs/AI_HANDOFF.md" -Raw
   if ($handoff -match '\*\*Version:\*\*\s+([0-9]+\.[0-9]+\.[0-9]+)-(alpha|beta|stable)') {
@@ -32,12 +44,15 @@ function Set-PackageVersion {
     { param($match) $match.Groups[1].Value + $BaseVersion + $match.Groups[2].Value },
     1
   )
-  Set-Content -LiteralPath $packagePath -Value $packageContent -Encoding utf8
-  Write-Host "  Updated package.json"
+  if ($packageContent -ne (Get-Content -LiteralPath $packagePath -Raw)) {
+    Set-Content -LiteralPath $packagePath -Value $packageContent -Encoding utf8
+    Write-Host "  Updated package.json"
+  }
 
   $lockPath = "package-lock.json"
   if (Test-Path -LiteralPath $lockPath) {
     $lockContent = Get-Content -LiteralPath $lockPath -Raw
+    $originalLockContent = $lockContent
     $lockContent = [regex]::Replace(
       $lockContent,
       '("version":\s*")[^"]+(")',
@@ -50,8 +65,10 @@ function Set-PackageVersion {
       { param($match) $match.Groups[1].Value + $BaseVersion + $match.Groups[2].Value },
       1
     )
-    Set-Content -LiteralPath $lockPath -Value $lockContent -Encoding utf8
-    Write-Host "  Updated package-lock.json"
+    if ($lockContent -ne $originalLockContent) {
+      Set-Content -LiteralPath $lockPath -Value $lockContent -Encoding utf8
+      Write-Host "  Updated package-lock.json"
+    }
   }
 }
 
@@ -86,8 +103,10 @@ foreach ($file in $docFiles) {
 
   $content = Get-Content -LiteralPath $file -Raw
   $updated = $content -replace [regex]::Escape($alphaVersion), $stableVersion
-  Set-Content -LiteralPath $file -Value $updated -Encoding utf8
-  Write-Host "  Updated $file"
+  if ($updated -ne $content) {
+    Set-Content -LiteralPath $file -Value $updated -Encoding utf8
+    Write-Host "  Updated $file"
+  }
 }
 
 $versioningPath = "docs/VERSIONING.md"
@@ -95,25 +114,50 @@ if (Test-Path -LiteralPath $versioningPath) {
   $content = Get-Content -LiteralPath $versioningPath -Raw
   $content = $content -replace '(\| State\s+\|\s+)alpha(\s+\|)', '${1}stable${2}'
   $content = $content -replace ("(\| " + [regex]::Escape($stableVersion) + " \| )alpha( \|)"), '${1}stable${2}'
-  Set-Content -LiteralPath $versioningPath -Value $content -Encoding utf8
-  Write-Host "  Fixed State fields in docs/VERSIONING.md"
+  if ($content -ne (Get-Content -LiteralPath $versioningPath -Raw)) {
+    Set-Content -LiteralPath $versioningPath -Value $content -Encoding utf8
+    Write-Host "  Fixed State fields in docs/VERSIONING.md"
+  }
 }
 
 $phaseLogPath = "docs/PHASE_LOG.md"
 if (Test-Path -LiteralPath $phaseLogPath) {
   $content = Get-Content -LiteralPath $phaseLogPath -Raw
   $content = $content -replace ("(\| " + [regex]::Escape($stableVersion) + " \| )alpha( \|)"), '${1}stable${2}'
-  $content = $content -replace '(\*\*Status:\*\*\s+)alpha', '${1}stable'
-  Set-Content -LiteralPath $phaseLogPath -Value $content -Encoding utf8
-  Write-Host "  Fixed State fields in docs/PHASE_LOG.md"
+  $phasePattern = "(## \[" + [regex]::Escape($stableVersion) + "\][\s\S]*?)(\n---)"
+  $content = [regex]::Replace(
+    $content,
+    $phasePattern,
+    {
+      param($match)
+      ($match.Groups[1].Value -replace '(\*\*Status:\*\*\s+)alpha', '${1}stable') + $match.Groups[2].Value
+    },
+    1
+  )
+  if ($content -ne (Get-Content -LiteralPath $phaseLogPath -Raw)) {
+    Set-Content -LiteralPath $phaseLogPath -Value $content -Encoding utf8
+    Write-Host "  Fixed State fields in docs/PHASE_LOG.md"
+  }
 }
 
 $handoffPath = "docs/AI_HANDOFF.md"
 if (Test-Path -LiteralPath $handoffPath) {
   $content = Get-Content -LiteralPath $handoffPath -Raw
   $content = $content -replace '(\*\*Status:\*\*\s+)alpha', '${1}stable'
-  Set-Content -LiteralPath $handoffPath -Value $content -Encoding utf8
-  Write-Host "  Fixed Status field in docs/AI_HANDOFF.md"
+  if ($content -ne (Get-Content -LiteralPath $handoffPath -Raw)) {
+    Set-Content -LiteralPath $handoffPath -Value $content -Encoding utf8
+    Write-Host "  Fixed Status field in docs/AI_HANDOFF.md"
+  }
+}
+
+$futurePlansPath = "docs/FUTURE_PLANS.md"
+if (Test-Path -LiteralPath $futurePlansPath) {
+  $content = Get-Content -LiteralPath $futurePlansPath -Raw
+  $content = $content -replace '(\*\*Current stable version:\*\*\s+)[0-9]+\.[0-9]+\.[0-9]+-stable', ("`${1}" + $stableVersion)
+  if ($content -ne (Get-Content -LiteralPath $futurePlansPath -Raw)) {
+    Set-Content -LiteralPath $futurePlansPath -Value $content -Encoding utf8
+    Write-Host "  Fixed current stable version in docs/FUTURE_PLANS.md"
+  }
 }
 
 Set-PackageVersion -BaseVersion $Version
