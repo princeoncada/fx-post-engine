@@ -20,7 +20,7 @@
 
 | Version      | Phase | Description |
 |--------------|-------|-------------|
-| 1.0.3-stable | Promotion Workflow Hardening | Require alpha commits before stable promotion |
+| 1.0.4-alpha | Lockfile Versioning Guard | Prevent version-only workflows from touching package-lock.json |
 
 ---
 
