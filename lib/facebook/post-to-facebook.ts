@@ -6,6 +6,7 @@ import path from "path";
 type PostToFacebookInput = {
     imagePaths: string[];
     caption: string;
+    retryDelaysMs?: number[];
 };
 
 type FacebookPhotoUploadResponse = {
@@ -20,9 +21,50 @@ type FacebookPhotoUploadResponse = {
     };
 };
 
+type FacebookPostResponse = {
+    id?: string;
+    error?: FacebookPhotoUploadResponse["error"];
+};
+
+type FacebookErrorDetails = {
+    stage:
+        | "config"
+        | "page-check"
+        | "photo-upload"
+        | "feed-publish"
+        | "photo-cleanup";
+    status?: number;
+    graphCode?: number;
+    graphSubcode?: number;
+    fbtraceId?: string;
+    imageIndex?: number;
+    attempts?: number;
+    uploadedPhotoIds?: string[];
+};
+
+export class FacebookPostError extends Error {
+    details: FacebookErrorDetails;
+
+    constructor(message: string, details: FacebookErrorDetails) {
+        super(message);
+        this.name = "FacebookPostError";
+        this.details = details;
+    }
+}
+
+const DEFAULT_UPLOAD_RETRY_DELAYS_MS = [1000, 3000, 7000];
+const RETRYABLE_HTTP_STATUSES = new Set([500, 502, 503, 504]);
+
 function maskToken(token?: string) {
     if (!token) return "MISSING";
     return `${token.slice(0, 8)}...${token.slice(-6)}`;
+}
+
+function sanitizeFacebookResponse<T extends { access_token?: string }>(data: T) {
+    return {
+        ...data,
+        access_token: data.access_token ? maskToken(data.access_token) : undefined,
+    };
 }
 
 function logFacebookStep(label: string, data: unknown) {
@@ -30,9 +72,160 @@ function logFacebookStep(label: string, data: unknown) {
     console.dir(data, { depth: null });
 }
 
+function getFacebookErrorDetails(
+    stage: FacebookErrorDetails["stage"],
+    response: FacebookPhotoUploadResponse | FacebookPostResponse,
+    options: Partial<FacebookErrorDetails> = {}
+): FacebookErrorDetails {
+    return {
+        stage,
+        graphCode: response.error?.code,
+        graphSubcode: response.error?.error_subcode,
+        fbtraceId: response.error?.fbtrace_id,
+        ...options,
+    };
+}
+
+function isRetryableUploadFailure(
+    status: number,
+    response?: FacebookPhotoUploadResponse
+) {
+    return RETRYABLE_HTTP_STATUSES.has(status) || response?.error?.code === 1;
+}
+
+function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function uploadUnpublishedPhoto({
+    uploadUrl,
+    absolutePath,
+    effectivePageAccessToken,
+    imageIndex,
+    retryDelaysMs,
+}: {
+    uploadUrl: string;
+    absolutePath: string;
+    effectivePageAccessToken: string;
+    imageIndex: number;
+    retryDelaysMs: number[];
+}) {
+    const attempts = retryDelaysMs.length;
+
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+        const fileBuffer = await fs.promises.readFile(absolutePath);
+        const fileBlob = new Blob([fileBuffer], { type: "image/png" });
+        const form = new FormData();
+
+        form.append("source", fileBlob, path.basename(absolutePath));
+        form.append("published", "false");
+        form.append("access_token", effectivePageAccessToken);
+
+        try {
+            const uploadRes = await fetch(uploadUrl, {
+                method: "POST",
+                body: form,
+            });
+
+            const uploadJson =
+                (await uploadRes.json()) as FacebookPhotoUploadResponse;
+
+            logFacebookStep(`UPLOAD ${imageIndex} RESPONSE`, {
+                status: uploadRes.status,
+                ok: uploadRes.ok,
+                attempt,
+                attempts,
+                uploadJson,
+            });
+
+            if (uploadRes.ok && uploadJson.id) {
+                return uploadJson.id;
+            }
+
+            const retryable = isRetryableUploadFailure(
+                uploadRes.status,
+                uploadJson
+            );
+
+            if (!retryable || attempt === attempts) {
+                throw new FacebookPostError(
+                    uploadJson.error?.message ?? "Photo upload failed.",
+                    getFacebookErrorDetails("photo-upload", uploadJson, {
+                        status: uploadRes.status,
+                        imageIndex,
+                        attempts: attempt,
+                    })
+                );
+            }
+        } catch (error) {
+            if (error instanceof FacebookPostError) {
+                throw error;
+            }
+
+            if (attempt === attempts) {
+                throw new FacebookPostError(
+                    error instanceof Error
+                        ? error.message
+                        : "Photo upload failed.",
+                    {
+                        stage: "photo-upload",
+                        imageIndex,
+                        attempts: attempt,
+                    }
+                );
+            }
+        }
+
+        await sleep(retryDelaysMs[attempt - 1]);
+    }
+
+    throw new FacebookPostError("Photo upload failed.", {
+        stage: "photo-upload",
+        imageIndex,
+        attempts,
+    });
+}
+
+async function cleanupUploadedPhotos({
+    graphVersion,
+    uploadedPhotoIds,
+    effectivePageAccessToken,
+}: {
+    graphVersion: string;
+    uploadedPhotoIds: string[];
+    effectivePageAccessToken: string;
+}) {
+    for (const photoId of uploadedPhotoIds) {
+        try {
+            const cleanupParams = new URLSearchParams();
+            cleanupParams.append("access_token", effectivePageAccessToken);
+
+            const cleanupRes = await fetch(
+                `https://graph.facebook.com/${graphVersion}/${photoId}`,
+                {
+                    method: "DELETE",
+                    body: cleanupParams,
+                }
+            );
+
+            logFacebookStep("PHOTO CLEANUP RESPONSE", {
+                photoId,
+                status: cleanupRes.status,
+                ok: cleanupRes.ok,
+            });
+        } catch (error) {
+            logFacebookStep("PHOTO CLEANUP FAILED", {
+                photoId,
+                error: error instanceof Error ? error.message : String(error),
+            });
+        }
+    }
+}
+
 export async function postToFacebook({
     imagePaths,
     caption,
+    retryDelaysMs = DEFAULT_UPLOAD_RETRY_DELAYS_MS,
 }: PostToFacebookInput) {
     const pageId = process.env.META_PAGE_ID;
     const pageAccessToken = process.env.META_PAGE_ACCESS_TOKEN;
@@ -49,7 +242,10 @@ export async function postToFacebook({
     });
 
     if (!pageId || pageId === "0" || !pageAccessToken) {
-        throw new Error("Missing or invalid META_PAGE_ID or META_PAGE_ACCESS_TOKEN.");
+        throw new FacebookPostError(
+            "Missing or invalid META_PAGE_ID or META_PAGE_ACCESS_TOKEN.",
+            { stage: "config" }
+        );
     }
 
     const pageCheckRes = await fetch(
@@ -62,13 +258,16 @@ export async function postToFacebook({
     console.log("[FACEBOOK DEBUG] PAGE CHECK", {
         status: pageCheckRes.status,
         ok: pageCheckRes.ok,
-        pageCheckJson,
+        pageCheckJson: sanitizeFacebookResponse(pageCheckJson),
         effectivePageAccessTokenPreview: maskToken(effectivePageAccessToken),
     });
 
     if (!pageCheckRes.ok) {
-        throw new Error(
-            effectivePageAccessToken.error?.message ?? "Facebook page check failed."
+        throw new FacebookPostError(
+            pageCheckJson.error?.message ?? "Facebook page check failed.",
+            getFacebookErrorDetails("page-check", pageCheckJson, {
+                status: pageCheckRes.status,
+            })
         );
     }
 
@@ -89,12 +288,13 @@ export async function postToFacebook({
         });
 
         if (!fs.existsSync(absolutePath)) {
-            throw new Error(`Image not found: ${absolutePath}`);
+            throw new FacebookPostError(`Image not found: ${absolutePath}`, {
+                stage: "photo-upload",
+                imageIndex: index,
+            });
         }
 
         const uploadUrl = `https://graph.facebook.com/${graphVersion}/${pageId}/photos`;
-
-        console.log(uploadUrl)
 
         logFacebookStep(`UPLOAD ${index} REQUEST`, {
             uploadUrl,
@@ -105,34 +305,15 @@ export async function postToFacebook({
             },
         });
 
-        const fileBuffer = await fs.promises.readFile(absolutePath);
-        const fileBlob = new Blob([fileBuffer], { type: "image/png" });
-
-        const form = new FormData();
-
-        form.append("source", fileBlob, path.basename(absolutePath));
-        form.append("published", "false");
-        form.append("access_token", effectivePageAccessToken);
-
-        const uploadRes = await fetch(uploadUrl, {
-            method: "POST",
-            body: form,
+        const photoId = await uploadUnpublishedPhoto({
+            uploadUrl,
+            absolutePath,
+            effectivePageAccessToken,
+            imageIndex: index,
+            retryDelaysMs,
         });
 
-        const uploadJson =
-            (await uploadRes.json()) as FacebookPhotoUploadResponse;
-
-        logFacebookStep(`UPLOAD ${index} RESPONSE`, {
-            status: uploadRes.status,
-            ok: uploadRes.ok,
-            uploadJson,
-        });
-
-        if (!uploadRes.ok || !uploadJson.id) {
-            throw new Error(uploadJson.error?.message ?? "Photo upload failed.");
-        }
-
-        uploadedPhotoIds.push(uploadJson.id);
+        uploadedPhotoIds.push(photoId);
     }
 
     logFacebookStep("ALL UPLOADED PHOTO IDS", {
@@ -152,7 +333,7 @@ export async function postToFacebook({
         feedUrl,
         messageLength: caption.length,
         messagePreview: caption.slice(0, 300),
-        accessTokenPreview: maskToken(pageAccessToken),
+        accessTokenPreview: maskToken(effectivePageAccessToken),
         attachedMediaDebug,
     });
 
@@ -174,16 +355,7 @@ export async function postToFacebook({
         body: feedParams,
     });
 
-    const postJson = (await postRes.json()) as {
-        id?: string;
-        error?: {
-            message: string;
-            type?: string;
-            code?: number;
-            error_subcode?: number;
-            fbtrace_id?: string;
-        };
-    };
+    const postJson = (await postRes.json()) as FacebookPostResponse;
 
     logFacebookStep("FEED RESPONSE", {
         status: postRes.status,
@@ -192,7 +364,19 @@ export async function postToFacebook({
     });
 
     if (!postRes.ok) {
-        throw new Error(postJson.error?.message ?? "Facebook post failed.");
+        await cleanupUploadedPhotos({
+            graphVersion,
+            uploadedPhotoIds,
+            effectivePageAccessToken,
+        });
+
+        throw new FacebookPostError(
+            postJson.error?.message ?? "Facebook post failed.",
+            getFacebookErrorDetails("feed-publish", postJson, {
+                status: postRes.status,
+                uploadedPhotoIds,
+            })
+        );
     }
 
     return {
