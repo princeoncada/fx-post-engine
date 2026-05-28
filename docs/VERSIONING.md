@@ -19,7 +19,7 @@ X.Y.Z-state
 |--------|---------|
 | alpha  | Implementation in progress or unvalidated. May break. |
 | beta   | Feature-complete but not fully validated. Can be shown to client for review. |
-| stable | All required validation passes. Phase log updated. Version locations synchronized. Committed. |
+| stable | Alpha was committed first, promotion script was run, promotion changes were committed, and validation passed. |
 
 ---
 
@@ -38,7 +38,9 @@ Every repository change must be tied to a version, regardless of size.
 ## Promotion Rules
 
 - **To beta:** implementation complete and relevant smoke test passed.
-- **To stable:** all required validation commands in `docs/WORKFLOW.md` pass, `docs/PHASE_LOG.md` is updated, and all four version locations are in sync.
+- **To stable:** alpha version is committed first, `scripts/promote.ps1` is run, promotion changes are committed separately, required validation passes, and all four version locations are in sync.
+- Validation alone must never change an alpha version to stable.
+- The assistant must not manually write stable version docs for a validated alpha. Stable docs are created by `scripts/promote.ps1`.
 
 ---
 
@@ -57,10 +59,10 @@ All four must match before a version is declared stable:
 
 | Field        | Value |
 |-------------|-------|
-| Version      | 1.0.2-stable |
-| State        | stable |
+| Version      | 1.0.3-alpha |
+| State        | alpha |
 | Date         | 2026-05-28 |
-| Phase        | Phase 1.0.2 - Workflow Automation Scripts |
+| Phase        | Phase 1.0.3 - Promotion Workflow Hardening |
 | Next planned | Phase 1.1.0 - Standalone Automated Posting Runner |
 
 ---
@@ -73,6 +75,7 @@ All four must match before a version is declared stable:
 | 1.0.0-stable | stable | 2026-05-24 | Documentation baseline established |
 | 1.0.1-stable | stable | 2026-05-28 | Automation plan and HFK 5.1.0-equivalent workflow scripts |
 | 1.0.2-stable | stable | 2026-05-28 | HFK 5.1.0-equivalent validate runner and compact strategy |
+| 1.0.3-alpha  | alpha  | 2026-05-28 | Promotion workflow hardening |
 
 ---
 
