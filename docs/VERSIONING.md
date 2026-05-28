@@ -32,6 +32,8 @@ Every repository change must be tied to a version, regardless of size.
 - No implementation, prompt, workflow, or documentation update may be treated as too small to version.
 - The commit message must include the version string.
 - If a change intentionally skips runtime validation because it is docs-only, the PHASE_LOG entry must say that directly.
+- `package-lock.json` must not be edited for version-only, docs-only, prompt-only, or promotion-only changes.
+- `package-lock.json` may change only when dependency declarations or the dependency graph change.
 
 ---
 
@@ -53,16 +55,18 @@ All four must match before a version is declared stable:
 3. `docs/AI_HANDOFF.md` -> `**Version:**` header line
 4. `docs/PHASE_LOG.md` -> latest entry `## [X.Y.Z-state]` heading
 
+`package-lock.json` is not a versioning location. Do not sync package version-only changes into the lockfile.
+
 ---
 
 ## Current Version
 
 | Field        | Value |
 |-------------|-------|
-| Version      | 1.0.3-stable |
-| State        | stable |
+| Version      | 1.0.4-alpha |
+| State        | alpha |
 | Date         | 2026-05-28 |
-| Phase        | Phase 1.0.3 - Promotion Workflow Hardening |
+| Phase        | Phase 1.0.4 - Lockfile Versioning Guard |
 | Next planned | Phase 1.1.0 - Standalone Automated Posting Runner |
 
 ---
@@ -75,7 +79,8 @@ All four must match before a version is declared stable:
 | 1.0.0-stable | stable | 2026-05-24 | Documentation baseline established |
 | 1.0.1-stable | stable | 2026-05-28 | Automation plan and HFK 5.1.0-equivalent workflow scripts |
 | 1.0.2-stable | stable | 2026-05-28 | HFK 5.1.0-equivalent validate runner and compact strategy |
-| 1.0.3-stable  | alpha  | 2026-05-28 | Promotion workflow hardening |
+| 1.0.3-stable | stable | 2026-05-28 | Promotion workflow hardening |
+| 1.0.4-alpha  | alpha  | 2026-05-28 | Lockfile versioning guard |
 
 ---
 
