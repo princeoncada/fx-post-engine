@@ -12,6 +12,39 @@ Full version history and validation records.
 | 1.0.0-stable | stable | 2026-05-24 | Documentation baseline established |
 | 1.0.1-stable | stable | 2026-05-28 | Automation plan and HFK 5.1.0-equivalent workflow scripts |
 | 1.0.2-stable | stable | 2026-05-28 | HFK 5.1.0-equivalent validate runner and compact strategy |
+| 1.0.3-alpha  | alpha  | 2026-05-28 | Promotion workflow hardening |
+
+---
+
+## [1.0.3-alpha] - 2026-05-28
+**Phase:** Phase 1.0.3 - Promotion Workflow Hardening
+**Type:** Documentation and workflow script patch
+**Status:** alpha
+
+### Scope
+Locked in the Git-action-heavy lifecycle: alpha work must be committed first, then `scripts/promote.ps1` creates stable docs, then promotion changes are committed separately.
+
+### Files Updated
+- `package.json` - moved version to `1.0.3`
+- `package-lock.json` - synced root package versions to `1.0.3`
+- `scripts/promote.ps1` - refuses promotion on dirty working trees, updates Future Plans current stable version during promotion, writes only changed files, and limits PHASE_LOG status edits to the promoted phase
+- `CLAUDE.md` - clarified that validation does not create stable state
+- `docs/WORKFLOW.md` - documented required alpha commit, promotion, post-promotion commit, and push order
+- `docs/VERSIONING.md` - documented that validation alone must never promote alpha to stable
+- `docs/AI_HANDOFF.md` - updated current state to alpha and captured promotion rule
+- `docs/FUTURE_PLANS.md` - moved this hardening patch to In Progress
+- `docs/PHASE_LOG.md` - recorded this alpha patch
+
+### Validation
+- Baseline runner: `powershell -ExecutionPolicy Bypass -File .\scripts\validate.ps1` passed 6/6 checks
+- Promote dirty-tree guard: Pass; `scripts/promote.ps1 -Version "1.0.3"` refused to run while alpha files were uncommitted
+- Diff hygiene: Pass
+- Package JSON parse: Pass
+- Mojibake scan: Pass
+- TypeScript: Pass
+- Tests: Pass
+- Build: Pass
+- Promotion: pending; do not run until alpha files are committed
 
 ---
 
