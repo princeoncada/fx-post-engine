@@ -1,4 +1,4 @@
-# Phase Log - FX Post Engine
+﻿# Phase Log - FX Post Engine
 
 Full version history and validation records.
 
@@ -12,14 +12,14 @@ Full version history and validation records.
 | 1.0.0-stable | stable | 2026-05-24 | Documentation baseline established |
 | 1.0.1-stable | stable | 2026-05-28 | Automation plan and HFK 5.1.0-equivalent workflow scripts |
 | 1.0.2-stable | stable | 2026-05-28 | HFK 5.1.0-equivalent validate runner and compact strategy |
-| 1.0.3-alpha  | alpha  | 2026-05-28 | Promotion workflow hardening |
+| 1.0.3-stable  | alpha  | 2026-05-28 | Promotion workflow hardening |
 
 ---
 
-## [1.0.3-alpha] - 2026-05-28
+## [1.0.3-stable] - 2026-05-28
 **Phase:** Phase 1.0.3 - Promotion Workflow Hardening
 **Type:** Documentation and workflow script patch
-**Status:** alpha
+**Status:** stable
 
 ### Scope
 Locked in the Git-action-heavy lifecycle: alpha work must be committed first, then `scripts/promote.ps1` creates stable docs, then promotion changes are committed separately.
@@ -205,3 +205,5 @@ Initial working build of the complete FX Post Engine before the documentation sy
 
 ### Notes
 Retroactively assigned `0.1.0-alpha` status.
+
+
