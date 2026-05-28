@@ -18,7 +18,9 @@
 
 ## In Progress
 
-None.
+| Version      | Phase | Description |
+|--------------|-------|-------------|
+| 1.0.3-alpha | Promotion Workflow Hardening | Require alpha commits before stable promotion |
 
 ---
 
