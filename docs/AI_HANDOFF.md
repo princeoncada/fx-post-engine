@@ -1,8 +1,8 @@
-# AI Handoff - FX Post Engine
+﻿# AI Handoff - FX Post Engine
 
-**Version:** 1.0.3-alpha
+**Version:** 1.0.3-stable
 **Phase:** Phase 1.0.3 - Promotion Workflow Hardening
-**Status:** alpha
+**Status:** stable
 **Last updated:** 2026-05-28
 
 ---
@@ -99,6 +99,8 @@ See `docs/FUTURE_PLANS.md` for full scope.
 | 1.0.0-stable | 2026-05-24 | stable | Documentation baseline established |
 | 1.0.1-stable | 2026-05-28 | stable | Automation plan and workflow hardening |
 | 1.0.2-stable | 2026-05-28 | stable | HFK 5.1.0-equivalent validate runner and compact strategy |
-| 1.0.3-alpha  | 2026-05-28 | alpha  | Promotion workflow hardening |
+| 1.0.3-stable  | 2026-05-28 | alpha  | Promotion workflow hardening |
 
 Full history in `docs/PHASE_LOG.md`.
+
+
