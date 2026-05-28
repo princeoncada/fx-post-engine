@@ -32,8 +32,8 @@ Every repository change must be tied to a version, regardless of size.
 - No implementation, prompt, workflow, or documentation update may be treated as too small to version.
 - The commit message must include the version string.
 - If a change intentionally skips runtime validation because it is docs-only, the PHASE_LOG entry must say that directly.
-- `package-lock.json` must not be edited for version-only, docs-only, prompt-only, or promotion-only changes.
-- `package-lock.json` may change only when dependency declarations or the dependency graph change.
+- `package-lock.json` project metadata may be edited only at the top-level `version` key and `packages[""].version`.
+- `package-lock.json` dependency entry versions under `node_modules/*` must never be changed by project versioning or promotion scripts.
 
 ---
 
@@ -55,7 +55,7 @@ All four must match before a version is declared stable:
 3. `docs/AI_HANDOFF.md` -> `**Version:**` header line
 4. `docs/PHASE_LOG.md` -> latest entry `## [X.Y.Z-state]` heading
 
-`package-lock.json` is not a versioning location. Do not sync package version-only changes into the lockfile.
+`package-lock.json` is a targeted package metadata sync file, not a broad versioning location. Only the root project metadata version keys may be synced.
 
 ---
 
@@ -63,10 +63,10 @@ All four must match before a version is declared stable:
 
 | Field        | Value |
 |-------------|-------|
-| Version      | 1.0.4-stable |
-| State        | stable |
+| Version      | 1.0.5-alpha |
+| State        | alpha |
 | Date         | 2026-05-28 |
-| Phase        | Phase 1.0.4 - Lockfile Versioning Guard |
+| Phase        | Phase 1.0.5 - Targeted Lockfile Version Sync |
 | Next planned | Phase 1.1.0 - Standalone Automated Posting Runner |
 
 ---
@@ -80,7 +80,8 @@ All four must match before a version is declared stable:
 | 1.0.1-stable | stable | 2026-05-28 | Automation plan and HFK 5.1.0-equivalent workflow scripts |
 | 1.0.2-stable | stable | 2026-05-28 | HFK 5.1.0-equivalent validate runner and compact strategy |
 | 1.0.3-stable | stable | 2026-05-28 | Promotion workflow hardening |
-| 1.0.4-stable  | alpha  | 2026-05-28 | Lockfile versioning guard |
+| 1.0.4-stable | stable | 2026-05-28 | Lockfile versioning guard |
+| 1.0.5-alpha  | alpha  | 2026-05-28 | Targeted lockfile version sync |
 
 ---
 
