@@ -163,7 +163,7 @@ Four locations must always match:
 3. `docs/AI_HANDOFF.md` -> version header
 4. `docs/PHASE_LOG.md` -> latest entry heading
 
-`package-lock.json` is not a versioning location. Do not edit it for docs-only, version-only, prompt-only, workflow-only, or promotion-only changes.
+`package-lock.json` may be synced only at the top-level `version` key and `packages[""].version`. Never change dependency entry versions under `node_modules/*` for project versioning.
 
 ---
 
