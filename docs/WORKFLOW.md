@@ -70,6 +70,7 @@ PLAN -> CODEX PROMPT -> BUILD -> VERIFY -> DOCUMENT -> COMMIT
 - Update `docs/VERSIONING.md`.
 - Update `docs/FUTURE_PLANS.md` when planned scope changes.
 - Update `package.json` version field for every versioned change.
+- Do not update `package-lock.json` for version-only, docs-only, prompt-only, workflow-only, or promotion-only changes.
 
 ### 6. COMMIT
 Use one versioned commit message per logical change:
@@ -108,6 +109,16 @@ Every change must be documented through versioning, regardless of size.
 - Runtime implementation changes require the appropriate patch/minor/major version.
 
 No change may be committed as an undocumented adjustment.
+
+### Lockfile Rule
+
+`package-lock.json` is dependency-resolution metadata, not a project versioning location.
+
+- Do not edit `package-lock.json` when only bumping `package.json` version.
+- Do not edit `package-lock.json` during stable promotion.
+- Do not commit `package-lock.json` for docs-only, prompt-only, workflow-only, or promotion-only patches.
+- Commit `package-lock.json` only when dependency declarations or resolved dependency graph changed intentionally.
+- If `package-lock.json` changes unexpectedly, stop and inspect it before committing. Revert it unless the change is dependency-related and intentional.
 
 ---
 
