@@ -4,6 +4,7 @@ import { useState } from "react";
 
 type GenerateResult = {
   date: string;
+  retrievedDate: string;
   imagePaths: string[];
   caption: string;
   movers: {
@@ -75,7 +76,7 @@ export default function Home() {
             </h1>
 
             <p className="mt-3 text-lg text-[#6B5F4D]">
-              Generate, review, and upload today’s Top 3 currency movers vs PHP.
+              Generate, review, and upload the latest available Top 3 currency movers vs PHP.
             </p>
           </div>
 
@@ -84,7 +85,7 @@ export default function Home() {
             disabled={loading || uploading}
             className="rounded-full bg-[#0B3A2F] px-8 py-5 text-lg font-black text-[#F4E8D3] transition-all hover:-translate-y-1 disabled:opacity-60"
           >
-            {loading ? "Generating..." : "Generate Today’s FX Post"}
+            {loading ? "Generating..." : "Generate Latest FX Post"}
           </button>
         </div>
 
@@ -96,9 +97,12 @@ export default function Home() {
                   Card Preview
                 </h2>
 
-                <p className="text-lg font-semibold text-[#6B5F4D]">
-                  {data.date}
-                </p>
+                <div className="text-right text-lg font-semibold text-[#6B5F4D]">
+                  <p>Latest market data: {data.date}</p>
+                  <p className="text-sm uppercase tracking-[0.14em] text-[#9B762C]">
+                    Retrieved: {data.retrievedDate} PHT
+                  </p>
+                </div>
               </div>
 
               <div className="mt-6 grid gap-8 lg:grid-cols-3">
