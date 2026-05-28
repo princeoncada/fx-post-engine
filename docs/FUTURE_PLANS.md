@@ -1,7 +1,7 @@
-# Future Plans - FX Post Engine
+﻿# Future Plans - FX Post Engine
 
 **Last updated:** 2026-05-28
-**Current stable version:** 1.0.2-stable
+**Current stable version:** 1.0.3-stable
 
 ---
 
@@ -20,7 +20,7 @@
 
 | Version      | Phase | Description |
 |--------------|-------|-------------|
-| 1.0.3-alpha | Promotion Workflow Hardening | Require alpha commits before stable promotion |
+| 1.0.3-stable | Promotion Workflow Hardening | Require alpha commits before stable promotion |
 
 ---
 
@@ -159,3 +159,5 @@
 | Database: PostgreSQL or SQLite | No multi-user or complex query needs yet. Filesystem JSONL is sufficient and keeps operations simple. |
 | AI-generated caption content | Caption has legal and brand implications. Operator must remain in control of message content. Templates only. |
 | Separate operator review mode for automation | Low value after scheduled posting exists. Manual review is already covered by running the existing dashboard with `npm run dev`; adding another review mode would create another path to maintain without changing the real workflow. |
+
+
