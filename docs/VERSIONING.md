@@ -57,10 +57,10 @@ All four must match before a version is declared stable:
 
 | Field        | Value |
 |-------------|-------|
-| Version      | 1.0.1-stable |
+| Version      | 1.0.2-stable |
 | State        | stable |
 | Date         | 2026-05-28 |
-| Phase        | Phase 1.0.1 - Documentation Hardening |
+| Phase        | Phase 1.0.2 - Workflow Automation Scripts |
 | Next planned | Phase 1.1.0 - Standalone Automated Posting Runner |
 
 ---
@@ -71,7 +71,8 @@ All four must match before a version is declared stable:
 |--------------|--------|------------|-------------|
 | 0.1.0        | alpha  | 2026-05-01 | Initial working build before docs |
 | 1.0.0-stable | stable | 2026-05-24 | Documentation baseline established |
-| 1.0.1-stable | stable | 2026-05-28 | Automation plan and workflow hardening |
+| 1.0.1-stable | stable | 2026-05-28 | Automation plan and HFK 5.1.0-equivalent workflow scripts |
+| 1.0.2-stable | stable | 2026-05-28 | HFK 5.1.0-equivalent validate runner and compact strategy |
 
 ---
 
