@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "test": "tsc -p tsconfig.test.json && node --test .test-build/tests/unit/*.test.js",
     "start": "next start",
     "generate:fx": "tsx src/scripts/generate-fx-post.ts"
   },
