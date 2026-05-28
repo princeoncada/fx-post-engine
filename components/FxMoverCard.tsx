@@ -5,7 +5,8 @@ import type { FxMover } from "@/lib/fx/calculate-movers";
 type Props = {
   mover: FxMover;
   rank: number;
-  dateLabel: string;
+  marketDateLabel: string;
+  retrievedDateLabel: string;
 };
 
 const rankLabels: Record<number, string> = {
@@ -14,7 +15,12 @@ const rankLabels: Record<number, string> = {
   3: "Third mover",
 };
 
-export function FxMoverCard({ mover, rank, dateLabel }: Props) {
+export function FxMoverCard({
+  mover,
+  rank,
+  marketDateLabel,
+  retrievedDateLabel,
+}: Props) {
   const change = Math.abs(mover.changePercent).toFixed(2);
 
   return (
@@ -97,10 +103,14 @@ export function FxMoverCard({ mover, rank, dateLabel }: Props) {
           <div className="flex items-end justify-between gap-10 border-t border-[#CDAA63]/35 pt-8">
             <div className="max-w-[660px]">
               <p className="text-[24px] font-black tracking-[-0.02em] text-[#073D31]">
-                {dateLabel}
+                Latest market data: {marketDateLabel}
               </p>
 
-              <p className="mt-3 text-[21px] font-medium leading-[1.45] text-[#6B5F4D]">
+              <p className="mt-3 text-[21px] font-bold leading-[1.45] text-[#9B762C]">
+                Retrieved: {retrievedDateLabel} PHT
+              </p>
+
+              <p className="mt-2 text-[21px] font-medium leading-[1.45] text-[#6B5F4D]">
                 Market reference only. Message us for today&apos;s actual store rate.
               </p>
             </div>
