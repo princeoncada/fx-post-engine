@@ -1,8 +1,8 @@
 ﻿# AI Handoff - FX Post Engine
 
-**Version:** 1.0.4-alpha
+**Version:** 1.0.4-stable
 **Phase:** Phase 1.0.4 - Lockfile Versioning Guard
-**Status:** alpha
+**Status:** stable
 **Last updated:** 2026-05-28
 
 ---
@@ -102,8 +102,10 @@ See `docs/FUTURE_PLANS.md` for full scope.
 | 1.0.1-stable | 2026-05-28 | stable | Automation plan and workflow hardening |
 | 1.0.2-stable | 2026-05-28 | stable | HFK 5.1.0-equivalent validate runner and compact strategy |
 | 1.0.3-stable | 2026-05-28 | stable | Promotion workflow hardening |
-| 1.0.4-alpha  | 2026-05-28 | alpha  | Lockfile versioning guard |
+| 1.0.4-stable  | 2026-05-28 | alpha  | Lockfile versioning guard |
 
 Full history in `docs/PHASE_LOG.md`.
+
+
 
 
