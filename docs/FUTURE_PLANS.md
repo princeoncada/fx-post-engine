@@ -1,7 +1,7 @@
 # Future Plans - FX Post Engine
 
 **Last updated:** 2026-05-28
-**Current stable version:** 1.0.1-stable
+**Current stable version:** 1.0.2-stable
 
 ---
 
@@ -11,6 +11,8 @@
 |--------------|------------------------|----------------------------------------------------|
 | 0.1.0        | Initial Build          | Full working FX card generation + Facebook posting |
 | 1.0.0        | Documentation Baseline | Full AI workflow docs system established           |
+| 1.0.1        | Workflow Automation Scripts | HFK 5.1.0-equivalent local commit, validation, promotion, and compact-strategy workflow |
+| 1.0.2        | Workflow Automation Completion | Local validate runner and compact strategy wired into docs |
 
 ---
 
